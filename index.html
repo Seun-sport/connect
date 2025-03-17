@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beta Life Connection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        .progress {
+            width: 100%;
+            background: #ddd;
+            height: 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: green;
+            width: 0%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Beta Life Connection</h1>
+        <h3>Networking Chain Progress</h3>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p>Current Level: <span id="currentLevel">1</span></p>
+        <p>Income Earned: ₦<span id="income">0</span></p>
+        <button onclick="generateCertificate()">Download Certificate</button>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        const supabaseUrl = "https://btznitqabsyohltpbtxm.supabase.co";
+        const supabaseKey = "YOUR_SUPABASE_API_KEY";
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let level = 1;
+        let income = 0;
+        let requiredReferrals = [4, 16, 64, 256, 1024, 4096, 16384];
+        let earnings = [2000, 8000, 32000, 128000, 512000, 2048000, 8192000];
+
+        function updateProgress() {
+            document.getElementById("currentLevel").innerText = level;
+            document.getElementById("income").innerText = income.toLocaleString();
+            document.getElementById("progressBar").style.width = (level / 7) * 100 + "%";
+        }
+
+        function moveToNextLevel() {
+            if (level < 7) {
+                income += earnings[level - 1];
+                level++;
+                updateProgress();
+            }
+        }
+
+        function generateCertificate() {
+            const doc = new jsPDF({ orientation: "landscape" });
+            doc.setFontSize(16);
+            doc.text("BETA LIFE CONNECTION", 100, 20);
+            doc.text("Membership Certificate", 110, 30);
+            doc.text(`Member: John Doe`, 20, 40);
+            doc.text(`Membership ID: 123456`, 20, 50);
+            
+            let y = 70;
+            doc.text("LEVEL | NAME | ACCOUNT NAME | BANK | ACCOUNT NO | INCOME (₦)", 20, y);
+            requiredReferrals.forEach((_, index) => {
+                y += 10;
+                doc.text(`${index + 1} | John Doe | JD Bank | MoniePoint | 12345678 | ${earnings[index].toLocaleString()}`, 20, y);
+            });
+            
+            doc.text("TOTAL: ₦10,922,000", 20, y + 20);
+            doc.text("Admin Account Details", 150, y + 40);
+            doc.text("BETA LIFE INVESTMENT 2 | MoniePoint MFB | 6402249518", 110, y + 50);
+            
+            doc.save("certificate.pdf");
+        }
+        
+        updateProgress();
+    </script>
+</body>
+</html>
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import AdminDashboard from '../components/AdminDashboard';
+
+export default function HomeScreen({ navigation }) {
+  const handleLogout = () => {
+    // Implement your logout function here
+    console.log('Logging out...');
+    navigation.replace('LoginScreen'); // Navigate back to login
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>BETA LIFE CONNECTION</Text>
+        <Text style={styles.headerSubtitle}>Admin Portal</Text>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <MaterialIcons name="logout" size={24} color="white" />
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+
+      <AdminDashboard />
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#2c3e50',
+    padding: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#ecf0f1',
+    marginTop: 5,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e74c3c',
+    padding: 8,
+    borderRadius: 5,
+  },
+  logoutText: {
+    color: 'white',
+    marginLeft: 5,
+    fontWeight: 'bold',
+  },
+});
+
